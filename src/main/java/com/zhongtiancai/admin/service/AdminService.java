@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -94,7 +95,10 @@ public class AdminService {
     }
 
     public Page<Admin> searchByNickName(String nickName, Integer page, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(page - 1,pageSize, Sort.Direction.DESC);
-        return  adminRepository.findByNickNameLike(nickName,pageRequest);
+        PageRequest pageRequest = PageRequest.of(page - 1,pageSize, Sort.Direction.DESC,"id");
+        if(StringUtils.isEmpty(nickName)){
+            return adminRepository.findAll(pageRequest);
+        }
+        return  adminRepository.findByNickNameLike("%"+nickName+"%",pageRequest);
     }
 }
