@@ -18,6 +18,8 @@ public class AdminVM  {
     private String username;
     private String nickName;
     private String password;
+    private String icon;
+    private String email;
 
     private Set<Long> roles;
 
@@ -65,5 +67,21 @@ public class AdminVM  {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

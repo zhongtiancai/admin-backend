@@ -25,19 +25,18 @@ public class AdminController {
 
     @RequestMapping("/save")
     public ResponseEntity addAdmin(@RequestBody AdminVM adminVM){
+
+        if(adminVM.getId() == null && adminService.findByUsername(adminVM.getUsername())!=null){
+            //暂时不处理
+            throw new RuntimeException();
+        }
+
         Admin admin = new Admin();
-        admin.setPassword(adminVM.getPassword());
-        admin.setUsername(adminVM.getUsername());
+        BeanUtils.copyProperties(adminVM, admin);
         adminService.save(admin, adminVM.getRoles());
-        return ResponseEntity.ok(null);
-    }
+        return ResponseEntity.ok(adminVM);
 
-    @RequestMapping("/update")
-    public ResponseEntity updateAdmin(@RequestBody AdminVM adminVM){
-        adminService.update(adminVM.getId(), adminVM.getRoles());
-        return ResponseEntity.ok(null);
     }
-
 
     @RequestMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id){
@@ -54,7 +53,7 @@ public class AdminController {
     @RequestMapping("/findPage")
     public ResponseEntity findPage(AdminVM adminVM, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
         Page<Admin> pageResult = adminService.searchByNickName(adminVM.getNickName(),page,pageSize);
-        pageResult.getContent().forEach(admin->{admin.setPassword(null);admin.setRoleList(new ArrayList<>());});
+        pageResult.getContent().forEach(admin->{admin.setPassword(null);});
         CommonPage commonPage = CommonPage.of(pageResult);
         return ResponseEntity.ok(commonPage);
     }

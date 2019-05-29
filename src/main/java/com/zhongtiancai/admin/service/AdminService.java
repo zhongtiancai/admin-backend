@@ -45,43 +45,40 @@ public class AdminService {
         return null;
     }
 
+    public Admin findByUsername(String username) {
+        return adminRepository.findByUsername(username);
+    }
+
     /**
      * 保存用户
-     * @param admin 用户信息
+     * @param adminParams 用户信息
      * @param roleIds 角色id
      * @return
      */
     @Transactional
-    public Admin save(Admin admin, Set<Long> roleIds) {
-        String password = passwordEncoder.encode(admin.getPassword());
-        admin.setPassword(password);
-        admin.setStatus(1);
-        if(!CollectionUtils.isEmpty(roleIds)){
-           List<Role>  role = roleRepository.findAllById(roleIds);
-           admin.setRoleList(role);
+    public Admin save(Admin adminParams, Set<Long> roleIds) {
+        Admin adminDb = new Admin();
+
+        if (adminParams.getId() != null) {
+            adminDb = adminRepository.findById(adminParams.getId()).get();
+        } else {
+            String password = passwordEncoder.encode(adminParams.getPassword());
+            adminDb.setPassword(password);
+            adminDb.setStatus(1);
+            adminDb.setUsername(adminParams.getUsername());
         }
-        return  adminRepository.save(admin);
+
+        adminDb.setEmail(adminParams.getEmail());
+        adminDb.setNickName(adminParams.getNickName());
+
+        if (!CollectionUtils.isEmpty(roleIds)) {
+            List<Role> role = roleRepository.findAllById(roleIds);
+            adminDb.setRoleList(role);
+        }
+        return adminRepository.save(adminDb);
     }
 
-    /**
-     * 更新用户角色
-     * @param id 用户id
-     * @param roles 用户角色
-     * @return
-     */
-    public Admin update(Long id, Set<Long> roles) {
-        Optional<Admin> adminOpt = adminRepository.findById(id);
-        if (!CollectionUtils.isEmpty(roles)) {
-            if (adminOpt.isPresent()) {
-                List<Role> role = roleRepository.findAllById(roles);
-                Admin admin = adminOpt.get();
-                admin.setRoleList(role);
-                return adminRepository.save(admin);
-            }
-        }
-        //TODO 定义一些业务异常
-        throw new RuntimeException();
-    }
+
 
 
     /**

@@ -56,4 +56,11 @@ public class AdminUserDetails implements UserDetails {
     public boolean isEnabled() {
         return admin.getStatus().equals(1);
     }
+
+    public String getNickName(){
+        return admin.getNickName();
+    }
+    public String getIcon(){
+        return admin.getIcon();
+    }
 }
