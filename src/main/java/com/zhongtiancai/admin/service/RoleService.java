@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -81,8 +82,11 @@ public class RoleService {
      * @return
      */
     public Page<Role> searchByName(String name, Integer page,Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(page - 1,pageSize, Sort.Direction.DESC);
-       return  roleRepository.findByNameLike(name,pageRequest);
+        PageRequest pageRequest = PageRequest.of(page - 1,pageSize, Sort.Direction.DESC,"id");
+        if(StringUtils.isEmpty(name)){
+            return roleRepository.findAll(pageRequest);
+        }
+        return  roleRepository.findByNameLike("%"+name+"%",pageRequest);
     }
 
     public List<Role> findByStatus(int status) {
