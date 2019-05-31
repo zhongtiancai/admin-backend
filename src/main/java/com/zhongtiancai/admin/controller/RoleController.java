@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -28,17 +29,11 @@ public class RoleController {
     @RequestMapping("/save")
     public ResponseEntity addRole(@RequestBody RoleVM roleVM){
         Role role = new Role();
-        role.setDescription(roleVM.getDescription());
-        role.setName(roleVM.getName());
+        BeanUtils.copyProperties(roleVM,role);
         roleService.save(role, roleVM.getPermissions());
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(role);
     }
 
-    @RequestMapping("/update")
-    public ResponseEntity updateRole(@RequestBody  RoleVM roleVM){
-        roleService.update(roleVM.getId(), roleVM.getPermissions());
-        return ResponseEntity.ok(null);
-    }
 
     @RequestMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id){

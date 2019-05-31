@@ -1,24 +1,24 @@
 package com.zhongtiancai.admin.service;
 
 import com.zhongtiancai.admin.dao.AdminRepository;
+import com.zhongtiancai.admin.dao.PermissionRepository;
 import com.zhongtiancai.admin.dao.RoleRepository;
 import com.zhongtiancai.admin.entity.Admin;
+import com.zhongtiancai.admin.entity.Permission;
 import com.zhongtiancai.admin.entity.Role;
 import com.zhongtiancai.admin.vm.AdminUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,11 +36,19 @@ public class AdminService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PermissionRepository permissionRepository;
+
     @Transactional
     public AdminUserDetails getAdminByUsername(String username) {
         Admin admin = adminRepository.findByUsername(username);
         if (admin != null) {
-            return new AdminUserDetails(admin);
+            AdminUserDetails adminDetail = new AdminUserDetails(admin);
+            if(admin.getUsername().equals("admin")){
+                List<Permission> permissions = permissionRepository.findAll();
+                adminDetail.addPermissions(permissions);
+            }
+            return adminDetail;
         }
         return null;
     }

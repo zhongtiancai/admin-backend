@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,9 @@ public class RoleService {
      * @return
      */
     public Role save(Role role, Set<Long> permissionIds) {
+        if(role.getId() == null) {
+            role.setCreateTime(new Date());
+        }
         role.setStatus(1);
         if(!CollectionUtils.isEmpty(permissionIds)){
             List<Permission> permissions = permissionRepository.findAllById(permissionIds);

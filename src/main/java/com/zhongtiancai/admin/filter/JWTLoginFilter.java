@@ -1,7 +1,9 @@
 package com.zhongtiancai.admin.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zhongtiancai.admin.dao.PermissionRepository;
 import com.zhongtiancai.admin.entity.Admin;
+import com.zhongtiancai.admin.entity.Permission;
 import com.zhongtiancai.admin.utils.JsonUtils;
 import com.zhongtiancai.admin.utils.JwtTokenUtil;
 import com.zhongtiancai.admin.vm.AdminUserDetails;
@@ -22,11 +24,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -41,6 +41,9 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     private JwtTokenUtil jwtTokenUtil;
  
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
 
 
  
@@ -73,10 +76,6 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
         AdminUserDetails user = (AdminUserDetails) auth.getPrincipal();
-        if(user.getUsername().equals("admin")){
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("admin");
-            ((List) user.getAuthorities()).add(grantedAuthority);
-        }
         String token = jwtTokenUtil.generateToken(user);
         res.addHeader(tokenHeader, tokenHead + " " + token);
         res.setCharacterEncoding("UTF-8");

@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class AdminController {
         return ResponseEntity.ok(adminVM);
     }
 
-
+    @PreAuthorize("hasAuthority('adminlist')")
     @RequestMapping("/findPage")
     public ResponseEntity findPage(AdminVM adminVM, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
         Page<Admin> pageResult = adminService.searchByNickName(adminVM.getNickName(),page,pageSize);

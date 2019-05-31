@@ -26,6 +26,8 @@ public class Permission {
     @Column(name="create_time")
     private Date createTime;
 
+    private String key;
+
 
     public Long getId() {
         return id;
@@ -81,5 +83,13 @@ public class Permission {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

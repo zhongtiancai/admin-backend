@@ -20,6 +20,6 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler{
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException e) throws IOException, ServletException {
-       response.setStatus(HttpStatus.UNAUTHORIZED.value());
+       response.setStatus(HttpStatus.FORBIDDEN.value());
     }
 }
